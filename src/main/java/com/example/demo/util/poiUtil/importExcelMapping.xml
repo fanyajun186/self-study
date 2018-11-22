@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<improtExcel id="com.venustech.tsoc.cupid.businessaudit.basedata.resgroup.data.ResGroup" name="业务系统">				
+		<mapping type="text" excelTitle="业务系统编号" property="resgroupid" required="true">
+			<maxLength>50</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="业务系统名称" property="name" required="true">
+			<maxLength>128</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="上级业务系统编号" property="parentid" required="true">
+			<maxLength>50</maxLength>
+		</mapping>
+		<mapping type="map" excelTitle="状态" property="status" required="true">
+			<mapName>resGroupStatus</mapName>
+			<mapDefaultValue>1</mapDefaultValue>
+		</mapping>	
+		<mapping type="text" excelTitle="业务系统简称" property="shortname" required="true">
+			<maxLength>128</maxLength>
+		</mapping>
+	</improtExcel>
+	
+	<!-- 资源名称	资源类型	资源ip	状态	访问协议	资源组编号 -->
+	<improtExcel id="com.venustech.tsoc.cupid.businessaudit.basedata.resource.data.Resource" alias="sysRes" name="系统资源">
+		<mapping type="text" excelTitle="资源名称" property="name" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="map" excelTitle="资源类型" property="type" required="true">
+			<mapName>cdevtype</mapName>
+		</mapping>
+		<mapping type="ip" excelTitle="资源ip" property="ip" required="true"/>
+		<mapping type="map" excelTitle="状态" property="status" required="true">
+			<mapName>resStatus</mapName>
+			<mapDefaultValue>1</mapDefaultValue>
+		</mapping>
+		<mapping type="protocol" excelTitle="访问协议" property="protocol">
+			<maxLength>1024</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="业务系统编号" property="resGroupId" required="true">
+			<maxLength>25</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="ip地址列表" property="rangeIp" >
+			<maxLength>128</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="主机名称" property="hostName" >
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="资源版本" property="version" >
+			<maxLength>16</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="资源描述" property="description" >
+			<maxLength>128</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="负责人名称" property="masterName" >
+			<maxLength>320</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="负责人中文名" property="masterRealName" >
+			<maxLength>160</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="物理位置" property="phyloca" >
+			<maxLength>128</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="数据库类型" property="dbType" >
+			<maxLength>25</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="数据库实例" property="dbSid" >
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="port" excelTitle="数据库port" property="dbPort" />
+		<mapping type="text" excelTitle="unix主机系统类型" property="unixSysType" >
+			<maxLength>25</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="unix主机系统版本" property="unixSysVersion" >
+			<maxLength>25</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="数据库版本" property="dbVersion" >
+			<maxLength>25</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="本地服务名" property="dbLocalSid" >
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="数据库服务器名称" property="dbServerName" >
+			<maxLength>32</maxLength>
+		</mapping>
+	</improtExcel>
+	
+	<improtExcel id="com.venustech.tsoc.cupid.businessaudit.basedata.resource.data.Resource" alias="appRes" name="应用资源">
+		<mapping type="text" excelTitle="资源名称" property="name" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="业务系统编号" property="resGroupId" required="true">
+			<maxLength>25</maxLength>
+		</mapping>
+		<mapping type="map" excelTitle="状态" property="status">
+			<mapName>resStatus</mapName>
+			<mapDefaultValue>0</mapDefaultValue>
+		</mapping>
+		<mapping type="map" excelTitle="访问方式" property="accessMethod">
+			<mapName>appAccessMethod</mapName>
+			<mapDefaultValue>1</mapDefaultValue>
+		</mapping>
+		<mapping type="text" excelTitle="资源认证url" property="url" >
+			<maxLength>512</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="url参数" property="parameter">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="资源连接方式" property="resMode" >
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="protocol" excelTitle="资源访问协议" property="protocol">
+			<maxLength>1024</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="资源版本" property="version" >
+			<maxLength>16</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="资源描述" property="description">
+			<maxLength>128</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="负责人主帐号" property="masterName" >
+			<maxLength>320</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="负责人中文名" property="masterRealName">
+			<maxLength>160</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="资源物理位置" property="phyloca" >
+			<maxLength>128</maxLength>
+		</mapping>
+	</improtExcel>
+	<improtExcel id="com.venustech.tsoc.cupid.businessaudit.basedata.accslave.data.AccSlave" name="从帐号" >
+		<mapping type="text" excelTitle="从帐号名称" property="name" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="db" excelTitle="所属资源名称" property="resid" required="true">
+			<annoName>baResourceService</annoName>
+			<className>com.venustech.tsoc.cupid.businessaudit.basedata.resource.service.ResourceService</className>
+			<methodName>getResIdByName</methodName>
+		</mapping>
+		<mapping type="map" excelTitle="从帐号类型" property="type" required="true">
+			<mapName>lreceive</mapName>
+			<mapDefaultValue>1</mapDefaultValue>
+		</mapping>
+		<mapping type="map" excelTitle="是否允许远程登录" property="isremotlogin" required="true">
+			<mapName>accSlaveLogin</mapName>
+			<mapDefaultValue>0</mapDefaultValue>
+		</mapping>
+		<mapping type="map" excelTitle="是否为敏感帐号" property="sensitiveaccount" required="true">
+			<mapName>accSlaveSensitive</mapName>
+			<mapDefaultValue>0</mapDefaultValue>
+		</mapping>
+		<mapping type="map" excelTitle="是否共享" property="isslave" required="true">
+			<mapName>accSlaveIsSlave</mapName>
+			<mapDefaultValue>2</mapDefaultValue>
+		</mapping>
+		<mapping type="map" excelTitle="登录通道" property="logchannel" required="true">
+			<mapName>accSlaveLogChannel</mapName>
+			<mapDefaultValue>0</mapDefaultValue>
+		</mapping>
+		<mapping type="map" excelTitle="状态" property="status" required="true">
+			<mapName>dmonitorvalue</mapName>
+			<mapDefaultValue>1</mapDefaultValue>
+		</mapping>
+		<mapping type="text" excelTitle="描述" property="describtion" >
+			<maxLength>128</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="负责人中文名" property="masterchinesname">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="负责人名称" property="mastername">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="数据库角色" property="db_role">
+			<maxLength>32</maxLength>
+		</mapping>
+	</improtExcel>		 					 			 			
+										
+	<improtExcel id="com.venustech.tsoc.cupid.businessaudit.basedata.organization.data.Organization" name="组织" >
+		<mapping type="text" excelTitle="组织编号" property="orgid" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="组织名称" property="name" required="true">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="上级组织编号" property="parentid" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="map" excelTitle="组织类型" property="type" required="true">
+			<mapName>orgType</mapName>
+			<mapDefaultValue>2</mapDefaultValue>
+		</mapping>
+		<mapping type="map" excelTitle="状态" property="status" required="true">
+			<mapName>orgStatus</mapName>
+			<mapDefaultValue>1</mapDefaultValue>
+		</mapping>
+		<mapping type="text" excelTitle="组织描述" property="desc">
+			<maxLength>126</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="英文缩写" property="enabbre">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="地域" property="region">
+			<maxLength>64</maxLength>
+		</mapping>
+	</improtExcel>
+	
+	<improtExcel id="com.venustech.tsoc.cupid.businessaudit.basedata.master.data.Master" name="master" >
+		<mapping type="text" excelTitle="主帐号名称" property="name" required="true">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="中文名" property="realname" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="组织编号" property="orgid" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="map" excelTitle="类型" property="type" required="true">
+			<mapName>isrctport</mapName>
+			<mapDefaultValue>2</mapDefaultValue>
+		</mapping>
+		<mapping type="text" excelTitle="主帐号角色" property="role" required="true">
+			<maxLength>32</maxLength>
+		</mapping>
+		<mapping type="map" excelTitle="状态" property="status" required="true">
+			<mapName>idsttport</mapName>
+			<mapDefaultValue>1</mapDefaultValue>
+		</mapping>
+		<mapping type="text" excelTitle="有效期开始时间" property="startdate" required="true">
+			<maxLength>10</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="有效期结束时间" property="enddate" required="true">
+			<maxLength>10</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="描述" property="des" >
+			<maxLength>128</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="员工号" property="employernumber">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="phone" excelTitle="手机号" property="phonenumber"/>
+		<mapping type="text" excelTitle="登录名" property="loginname">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="email" excelTitle="邮箱" property="email" >
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="idcard" excelTitle="身份证号" property="identificationnumber"/>
+	</improtExcel>
+	
+	<improtExcel id="com.venustech.tsoc.cupid.businessaudit.basedata.authorization.data.MasterAuthIntoDB" name="masterAuth" >
+		<mapping type="text" excelTitle="主帐号" property="mastername" required="true">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="资源" property="resname" required="true">
+			<maxLength>64</maxLength>
+		</mapping>
+		<mapping type="text" excelTitle="从帐号" property="slavename" required="true">
+			<maxLength>64</maxLength>
+		</mapping>
+	</improtExcel>
+	
+</root>
