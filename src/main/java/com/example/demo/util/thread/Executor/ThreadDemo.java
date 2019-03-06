@@ -2,8 +2,10 @@ package com.example.demo.util.thread.Executor;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -15,6 +17,13 @@ import java.util.concurrent.TimeUnit;
 public class ThreadDemo {
 
     public static void main(String[] args) {
+    	
+    	for (int i = 0; i < 10; i++) {
+    		int nextInt = new Random().nextInt(4);
+    		System.out.println("nextInt:"+nextInt);			
+		}
+    	
+		
     	ExecutorService executorService = Executors.newFixedThreadPool(4);   
     	
     	executorService.execute(new Runnable() {
