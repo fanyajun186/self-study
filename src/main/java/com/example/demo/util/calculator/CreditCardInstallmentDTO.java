@@ -2,11 +2,20 @@ package com.example.demo.util.calculator;
 
 import java.math.BigDecimal;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * 信用卡分期金额
  * @author fan
  *
  */
+@Data
+@Builder			//书写形式可以用对象.builder()后接属性赋值
+@NoArgsConstructor    //不加这个就不能 CreditCardInstallmentDTO dto=new CreditCardInstallmentDTO();
+@AllArgsConstructor  //构造方法中传所有属性 
 public class CreditCardInstallmentDTO {
 
 	/**
@@ -33,46 +42,5 @@ public class CreditCardInstallmentDTO {
 	 * 盈利利率
 	 */
 	private BigDecimal profitLoanRate;
-	
-
-	public BigDecimal getTotalAmount() {
-		return totalAmount;
-	}
-
-	public void setTotalAmount(BigDecimal totalAmount) {
-		this.totalAmount = totalAmount;
-	}
-
-	public Integer getTermCount() {
-		return termCount;
-	}
-
-	public void setTermCount(Integer termCount) {
-		this.termCount = termCount;
-	}
-
-	public BigDecimal getLoanRate() {
-		return loanRate;
-	}
-
-	public void setLoanRate(BigDecimal loanRate) {
-		this.loanRate = loanRate;
-	}	
-	
-	public BigDecimal getMonthFee() {
-		return monthFee;
-	}
-
-	public void setMonthFee(BigDecimal monthFee) {
-		this.monthFee = monthFee;
-	}
-
-	public BigDecimal getProfitLoanRate() {
-		return profitLoanRate;
-	}
-
-	public void setProfitLoanRate(BigDecimal profitLoanRate) {
-		this.profitLoanRate = profitLoanRate;
-	}	
 	
 }

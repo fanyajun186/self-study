@@ -149,6 +149,13 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.2</version>
         </dependency>
+        
+        <!-- 对象自动构建 -->
+        <dependency>
+             <groupId>org.projectlombok</groupId>
+             <artifactId>lombok</artifactId>
+             <version>1.16.20</version>
+         </dependency>
 
 	</dependencies>
 
