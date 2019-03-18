@@ -13,15 +13,15 @@ public class operationProfit {
 							.termCount(12)
 							.profitLoanRate(new BigDecimal(0.0323))
 							.build();		
-		BigDecimal result=calculate(dto);
-		System.out.println("总收益"+result);
+		BigDecimal result=calculateTermProfit(dto);
+		System.out.println("盈利："+result);	
 		
 		System.out.println("每月刷1200元，刷12月，存京东==========》");
 		BigDecimal totalCost =countCost(new BigDecimal(1200),new BigDecimal(0.0053),1);
 		BigDecimal totalProfit =countEachMonthProfit(new BigDecimal(1200),new BigDecimal(0.0323));
-		BigDecimal everyMonthProfit =totalProfit.subtract(totalCost);
-		System.out.println("月收益"+everyMonthProfit);
-		System.out.println("年收益"+everyMonthProfit.multiply(new BigDecimal(12)));
+		BigDecimal everyMonthProfit =totalProfit.subtract(totalCost);		
+		System.out.println("月盈利："+everyMonthProfit);
+		System.out.println("年盈利："+everyMonthProfit.multiply(new BigDecimal(12)));
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class operationProfit {
 	 * @param dto
 	 * @return
 	 */
-	private static BigDecimal calculate(CreditCardInstallmentDTO dto) {
+	private static BigDecimal calculateTermProfit(CreditCardInstallmentDTO dto) {
 		BigDecimal totalAmount = dto.getTotalAmount();
 		BigDecimal loanRate = dto.getLoanRate();
 		BigDecimal monthFee = dto.getMonthFee();
@@ -37,10 +37,10 @@ public class operationProfit {
 		BigDecimal  profitLoanRate= dto.getProfitLoanRate();		
 		//计算花费
 		BigDecimal totalCost =countCost(totalAmount,loanRate,termCount);
-		System.out.println("花费"+totalCost);		
+		System.out.println("花费："+totalCost);		
 		//计算收益
 		BigDecimal totalProfit =countProfit(totalAmount,profitLoanRate,termCount,monthFee);
-		System.out.println("产出"+totalProfit);		
+		System.out.println("收益："+totalProfit);		
 		return totalProfit.subtract(totalCost);
 	}	
 
@@ -68,8 +68,8 @@ public class operationProfit {
 		BigDecimal toatl=totalAmount;
 		for (int i = 0; i <termCount; i++) {
 			toatl=totalAmount.subtract(monthFee.multiply(new BigDecimal(i))).setScale(2,BigDecimal.ROUND_HALF_UP);
-			System.out.print("第"+i+"月，本金剩余"+toatl+"，");
 			BigDecimal eachMonthProfit=countEachMonthProfit(toatl,profitLoanRate);
+			System.out.println("第"+i+"月，本金剩余"+toatl+"，月收益"+eachMonthProfit);
 			result=result.add(eachMonthProfit);			
 		}		
 		return result;
@@ -82,8 +82,7 @@ public class operationProfit {
 	 * @return
 	 */
 	private static BigDecimal countEachMonthProfit(BigDecimal toatl, BigDecimal profitLoanRate) {
-		BigDecimal eachMonthProfit = toatl.multiply(profitLoanRate).divide(new BigDecimal(12)).setScale(2, BigDecimal.ROUND_HALF_UP);
-		System.out.println("月收益"+eachMonthProfit);
+		BigDecimal eachMonthProfit = toatl.multiply(profitLoanRate).divide(new BigDecimal(12)).setScale(2, BigDecimal.ROUND_HALF_UP);		
 		return eachMonthProfit;
 	}
 	
