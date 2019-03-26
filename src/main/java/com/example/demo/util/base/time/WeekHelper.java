@@ -3,9 +3,11 @@ package com.example.demo.util.base.time;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-/**
- *
- * @author zhaoruixing
+
+/** 
+ * @Description:指定时段周历
+ * @author: yajun.fan
+ * @date: 2019年3月22日
  */
 public class WeekHelper {
 
@@ -13,8 +15,8 @@ public class WeekHelper {
     private static long SevenDay = 604800;
     
     public static void main(String[] args) {
-        String start = "2016-12-05";
-        String end = "2017-01-29";
+        String start = "2018-12-31";
+        String end = "2019-03-31";
         try {
             Date startDate = sdf.parse(start);
             Date endDate = sdf.parse(end);
@@ -62,7 +64,7 @@ public class WeekHelper {
                 startYear = endYear;
             }
             Week everyWeek = new Week();
-            long WeekNum = (startCal.getTimeInMillis() / 1000 - FistSaturday.getTimeInMillis() / 1000) / SevenDay + 1;
+            long WeekNum = (startCal.getTimeInMillis() / 1000 - FistSaturday.getTimeInMillis() / 1000) / SevenDay+1;
             String WeekNumStr = String.valueOf(WeekNum);
             if (WeekNum < 10) {
                 WeekNumStr = "0" + WeekNum;
