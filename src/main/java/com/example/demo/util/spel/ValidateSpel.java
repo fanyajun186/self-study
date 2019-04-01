@@ -31,5 +31,5 @@ public class ValidateSpel implements Serializable {
     /**
      * 提示信息
      */
-    private String resultDesc;
+    private String desc;
 }
