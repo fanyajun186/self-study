@@ -1,8 +1,9 @@
 package com.example.demo.util.spel;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo.dto.common.Student;
 import com.example.demo.dto.spel.Inventor;
+import com.example.demo.dto.spel.PlaceOfBirth;
+import com.example.demo.dto.spel.Society;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,14 +16,17 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * spring spel 解析工具类
- * Created by yanpeng.liu on 2019/3/20.
+ * spel学习练手类
+ * @author yajun.fan
+ * @date 2019年4月2日
  */
 @Slf4j
 public class SpelUtil {
@@ -75,25 +79,80 @@ public class SpelUtil {
     	spelList.add(validateSpel);
     	parserSpelExpressions(spelList,null);*/    	
     	
-    	baseTest();    	
+    	//baseTest();    	
     	//simlpeTest();
     	//parserTest();
     	//collectionTest();
+    	operatorTest();
     	
 	}   
 
+    //运算符操作
+    //文本是等值 比如: lt (<), gt (>), le (<=), ge (>=), eq (==), ne (!=), div (/), mod (%), not (!). 这些都是不区分大小写。
+	private static void operatorTest() {
+		boolean trueValue = PARSER.parseExpression("2 == 2").getValue(Boolean.class);		
+		boolean trueValue2 = PARSER.parseExpression("2 eq 2").getValue(Boolean.class);		
+		int i=PARSER.parseExpression("2 div 2").getValue(int.class);
+
+		// evaluates to false
+		boolean falseValue = PARSER.parseExpression("2 < -5.0").getValue(Boolean.class);
+		// evaluates to true
+		boolean trueValue3 = PARSER.parseExpression("'black' < 'block'").getValue(Boolean.class);		
+		boolean falseValue2 = PARSER.parseExpression("'xyz' instanceof T(int)").getValue(Boolean.class);
+
+		// evaluates to true
+		boolean trueValue4 = PARSER.parseExpression("'5.00' matches '^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
+		//evaluates to false
+		boolean falseValue3 = PARSER.parseExpression("'5.0067' matches '^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
+		
+		// Addition
+		int two = PARSER.parseExpression("1 + 1").getValue(Integer.class); // 2
+		String testString = PARSER.parseExpression("'test' + ' ' + 'string'").getValue(String.class); // test string
+
+		// Subtraction
+		int four = PARSER.parseExpression("1 - -3").getValue(Integer.class); // 4
+		//1e4就是10000,1后面4个0
+		double d = PARSER.parseExpression("1e4").getValue(Double.class); // -9000
+
+		// Multiplication
+		int six = PARSER.parseExpression("-2 * -3").getValue(Integer.class); // 6		
+		double twentyFour = PARSER.parseExpression("2.0 * 3e0 * 4").getValue(Double.class); // 24.0
+
+		// Division
+		int minusTwo = PARSER.parseExpression("6 / -3").getValue(Integer.class); // -2
+		double one = PARSER.parseExpression("8.0 / 4e1 / 2").getValue(Double.class); // 0.1
+
+		// Modulus
+		int three = PARSER.parseExpression("7 % 4").getValue(Integer.class); // 3
+		int one2 = PARSER.parseExpression("8 / 5 % 2").getValue(Integer.class); // 1
+		// Operator precedence
+		int minusTwentyOne = PARSER.parseExpression("1+2-3*8").getValue(Integer.class); // -21
+	}
+
 	//基础操作
-    private static void baseTest() {	
-    	
+    private static void baseTest() {    	
     	GregorianCalendar c = new GregorianCalendar();
     	c.set(1856, 7, 9);
+    	PlaceOfBirth placeOfBirth=new PlaceOfBirth("沧州","河北");
+    	
     	Inventor tesla = new Inventor("Nikola Tesla", c.getTime(), "Serbian");
-    	Expression exp = PARSER.parseExpression("name");
+    	tesla.setPlaceOfBirth(placeOfBirth);
+    	tesla.setAlive(true);
+    	tesla.setInventions(new String[]{"1","2","3","4"});    	
     	
-    	EvaluationContext context = new StandardEvaluationContext(tesla);
-    	
-    	System.out.println(exp.getValue(context,String.class));    	
+    	Expression exp = PARSER.parseExpression("name");    	
+    	EvaluationContext context = new StandardEvaluationContext(tesla);    	
+    	System.out.println(exp.getValue(context,String.class));
     	System.out.println(exp.getValue(tesla,String.class));
+    	
+    	//不区分大小写允许的属性名称的第一个字母可大可小。
+    	int year=(Integer) PARSER.parseExpression("birthdate.year +1900").getValue(context);
+    	String city = (String) PARSER.parseExpression("placeOfBirth.City").getValue(context);
+    	Boolean alive=(Boolean) PARSER.parseExpression("Alive").getValue(context);
+    	
+    	System.out.println("year:"+year);
+    	System.out.println("city:"+city);
+    	System.out.println("alive:"+alive);
     	
     	Expression exp2 = PARSER.parseExpression("name=='tom'");
     	Boolean result = exp2.getValue(context, Boolean.class);
@@ -103,6 +162,36 @@ public class SpelUtil {
     	Object value = exp3.getValue();
     	System.out.println("aaaa:"+value);
     	
+    	// 数组和列表使用方括号获得内容。inventions属性为空会异常，长度不够也会报数组越界
+    	String invention =PARSER.parseExpression("inventions[3]").getValue(context,String.class);
+    	System.out.println("invention:"+invention);
+    	
+    	//复杂对象取值
+    	Society ieee = new Society();
+    	List<Inventor> list=new ArrayList<Inventor>();
+    	list.add(tesla);
+    	Map officers = new HashMap();
+    	officers.put("president", tesla);
+    	ieee.setMembers(list);
+    	ieee.setOfficers(officers);
+    	StandardEvaluationContext societyContext = new StandardEvaluationContext(ieee);    	
+    	
+    	String name2 = PARSER.parseExpression("Members[0].Name").getValue(societyContext,String.class);
+    	System.out.println("Members集合第一个实体名称："+name2);    	
+    	String invention2 =PARSER.parseExpression("Members[0].Inventions[3]").getValue(societyContext, String.class);
+    	System.out.println("Members集合第一个实体的数组指定位置取值："+invention2);
+    	
+    	Inventor pupin = PARSER.parseExpression("Officers['president']").getValue(societyContext, Inventor.class);
+    	System.out.println("获取Officers集合指定key的取值："+pupin);    	
+    	
+    	//将沧州改能泊头，因为context没变，下面获取的就是最新的设值
+    	PARSER.parseExpression("Officers['president'].PlaceOfBirth.City").setValue(societyContext, "泊头");
+    	
+    	String city2 = PARSER.parseExpression("Officers['president'].PlaceOfBirth.City").getValue(societyContext, String.class);
+    	System.out.println("获取Officers集合指定key的属性的取值："+city2);
+    	
+    	boolean isMember =PARSER.parseExpression("isMember('Mihajlo Pupin')").getValue(societyContext,boolean.class);    	
+    	System.out.println("调用isMember方法："+isMember);
 	}
 
 	//类型转换
@@ -138,8 +227,7 @@ public class SpelUtil {
 		
 		Demo demo = new Demo();
 		Object o = expression.getValue(demo);
-		System.out.println(o);
-			
+		System.out.println(o);			
 	}
 
 	//集合类方法
@@ -147,7 +235,9 @@ public class SpelUtil {
 		EvaluationContext context = new StandardEvaluationContext();
 		//集合
     	//[1, 2, 3, 4]
-    	List numbers = (List) PARSER.parseExpression("{1,2,3,4}").getValue(context);    	
+    	List numbers = (List) PARSER.parseExpression("{1,2,3,4}").getValue(context);
+    	//[belongSale, belongDealer]
+    	List strs =  PARSER.parseExpression("{'belongSale','belongDealer'}").getValue(context,List.class);    	
     	//[[a, b], [x, y]]
     	List listOfLists = (List) PARSER.parseExpression("{{'a','b'},{'x','y'}}").getValue();
     	
