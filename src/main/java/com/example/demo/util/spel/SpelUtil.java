@@ -8,6 +8,9 @@ import com.example.demo.dto.spel.Society;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -32,6 +35,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class SpelUtil {
+	
+	private static Logger logger = LoggerFactory.getLogger(SpelUtil.class);	
 
     /**
      * spel解析器  config ：自动补全空集合、自动填充
@@ -40,39 +45,132 @@ public class SpelUtil {
 
 
     /**
+     * 处理字串类型spel表达式
+     * @Description:@param spel
+     * @Description:@param obj
+     * @Description:@param context     
+     * @return
+     */
+    public static void executeSpelStr(String spel,Object obj,EvaluationContext context ){
+        List<ValidateSpel> expressions = JSONObject.parseArray(spel,ValidateSpel.class);
+        executeSpelList(expressions,obj,context);
+    }
+    
+    /**
+     * 顺序执行spel集合
+     * @param expressions
+     * @param obj
+     * @return
+     */
+    public static void executeSpelList(List<ValidateSpel> expressions,Object obj){        
+        executeSpelList(expressions,obj,null);
+    }
+    
+    /**
+     * 
+     * @param expressions
+     * @param context
+     * @return
+     */
+    public static void executeSpelList(List<ValidateSpel> expressions,StandardEvaluationContext context ){
+    	executeSpelList(expressions,null,context);
+    }
+    
+    /**
+     * 顺序执行spel集合
+     * @Description:@param expressions
+     * @Description:@param obj
+     * @Description:@param context
+     * @return
+     * @throws Exception 
+     */
+    public static void executeSpelList(List<ValidateSpel> expressions,Object obj,EvaluationContext context ){
+        for(ValidateSpel exp : expressions){
+            //捕获spel表达式执行时发生的异常
+            try {            	
+            	parserElToString(exp,obj,context);
+            } catch (Exception e) {                
+                throw new RuntimeException(String.format("表达式：%s 配置错误：%s",exp.getExpression(),e.getMessage())) ;
+            }
+        }
+    }
+    
+    /**
+     * 执行el表达式获取Str结果
+     * @param expression
+     * @param data
+     * @return
+     */
+    public static String parserElToString(ValidateSpel expression,Object data,EvaluationContext context ){
+        if(Objects.isNull(expression.getExpType()) || ValidateSpelTypeEnum.SPEL_TYPE_BOOLEAN.isEqual(expression.getExpType())){
+            return parserElToBoolean(expression.getExpression(),data,context) ? expression.getResultDesc() : null;
+        }else if(ValidateSpelTypeEnum.SPEL_TYPE_STRING.isEqual(expression.getExpType())){
+            return PARSER.parseExpression(expression.getExpression()).getValue(data,String.class);
+        }else if(ValidateSpelTypeEnum.SPEL_TYPE_ASSEMBLE.isEqual(expression.getExpType())){
+            //return parserElToAssemble(expression.getExpression(),data);           
+        	return null;
+        }else if(ValidateSpelTypeEnum.SPEL_TYPE_ADD_DATA.isEqual(expression.getExpType())){
+            return parserElAddData(expression.getExpression(),data,context);
+        }else {
+        	logger.error("未匹配到对应的SPEL表达式类型！expression:{}",expression);
+            throw new RuntimeException("未匹配到对应的SPEL表达式类型");
+        }
+    }
+    
+    /**
      * 执行el表达式 获取boolean结果
      * @param expression
      * @param data
      * @return
      */
-    public static Boolean parserElToBoolean(String expression, Object data){
-        Boolean result = PARSER.parseExpression(expression).getValue(data,Boolean.class);
-        return Objects.isNull(result) ? Boolean.FALSE : result;
-    } 
-
+    public static Boolean parserElToBoolean(String expression, Object data ,EvaluationContext context){
+    	Boolean result = null;
+    	if(context!=null) {
+    		result = PARSER.parseExpression(expression).getValue(context,Boolean.class);            
+    	}else {
+    		result = PARSER.parseExpression(expression).getValue(data,Boolean.class);            
+    	}
+    	return Objects.isNull(result) ? Boolean.FALSE : result;
+    }
+    
     /**
-     * 校验spel 若不通过，返回提示信息
-     * @param spelList
-     * @param obj
+     * spel装配类型 解析并校验
+     * @param expression
+     * @param data
      * @return
      */
-    public static Object parserSpelExpressions(List<ValidateSpel> spelList,Object obj){
-        for(ValidateSpel exp : spelList){
-        	Object result = null;
-            //捕获spel表达式执行时发生的异常
-            //result = parserElToString(exp,obj);
-            if(obj!=null) {
-            	result = PARSER.parseExpression(exp.getExpression()).getValue(obj,String.class);            	
-            }else {
-            	result = PARSER.parseExpression(exp.getExpression()).getValue();
-            }
-            if(result!=null){
-            	System.out.println(result);
-                return result;
-            }
-        }
+    public static String parserElAddData(String expression,Object data,EvaluationContext context){
+        if(context!=null) {
+        	PARSER.parseExpression(expression).getValue(context);
+		}else {
+			PARSER.parseExpression(expression).getValue(data);            		
+		}
         return null;
     }
+    
+    /**
+     * 将spel表达式和data的操作结果赋值指定的类型
+     * @param expression
+     * @param data
+     * @param class1
+     * @return
+     */
+    public static <T> T parserElToAssignType(String expression,Object data,Class<T> c){
+    	return	PARSER.parseExpression(expression).getValue(data,c);
+    }
+    
+    /**
+     * 将spel表达式和data的操作结果赋值指定的类型
+     * @param expression
+     * @param context
+     * @param c
+     * @return
+     */
+    public static <T> T parserElToAssignType(String expression,EvaluationContext context,Class<T> c){
+    	return	PARSER.parseExpression(expression).getValue(context,c);
+    } 
+    
+    
 
     public static void main(String[] args) throws Exception {
     	/*long startTime=System.currentTimeMillis();
@@ -99,17 +197,30 @@ public class SpelUtil {
     	long endTime=System.currentTimeMillis();
     	System.out.println(endTime-startTime);*/
     	
-    	baseTest();    	
+    	//baseTest();    	
     	//simlpeTest();
     	//parserTest();
     	//collectionTest();
     	//operatorTest();
     	//thisAndRootTest();
     	
+    	GregorianCalendar c = new GregorianCalendar();
+    	c.set(1856, 7, 9);
+    	PlaceOfBirth placeOfBirth=new PlaceOfBirth("沧州","河北");
     	
+    	Inventor tesla = new Inventor("Nikola Tesla", c.getTime(), "Serbian");
+    	tesla.setPlaceOfBirth(placeOfBirth);
+    	tesla.setAlive(true);
+    	tesla.setInventions(new String[]{"1","2","3","4"});   
+    	
+    	String ex="name";
+    	
+    	String str=parserElToAssignType(ex,tesla, String.class);
+    	System.out.println("泛型："+str);
 	}   
-    
-    public static List<String> validateSpel(List<ValidateSpel> expressions,Object obj,StandardEvaluationContext context ){
+
+
+	public static List<String> validateSpel(List<ValidateSpel> expressions,Object obj,StandardEvaluationContext context ){
         //List<ValidateSpel> expressions = JSONObject.parseArray(spel,ValidateSpel.class);
         List<String> result = new ArrayList<>();
         for(ValidateSpel exp : expressions){

@@ -9,7 +9,8 @@ import java.io.Serializable;
 
 /**
  * spel表达式实体
- * Created by yanpeng.liu on 2019/3/20.
+ * @author: yajun.fan
+ * @date: 2019年4月2日
  */
 @Data
 @Builder
@@ -28,8 +29,14 @@ public class ValidateSpel implements Serializable {
      * 错误码
      */
     private String resultCode;
+    
     /**
      * 提示信息
+     */
+    private String resultDesc;
+    
+    /**
+     * 描述信息信息
      */
     private String desc;
 }
