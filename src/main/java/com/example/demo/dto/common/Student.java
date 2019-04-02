@@ -15,4 +15,6 @@ public class Student extends People{
 	
 	private String school;
 	
+	private Long deptCode;
+	
 }

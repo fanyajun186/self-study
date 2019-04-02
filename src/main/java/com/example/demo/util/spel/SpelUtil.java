@@ -7,15 +7,17 @@ import com.example.demo.dto.spel.Society;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.util.StringUtils;
+
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -64,7 +66,7 @@ public class SpelUtil {
             }else {
             	result = PARSER.parseExpression(exp.getExpression()).getValue();
             }
-            if(!StringUtils.isEmpty(result)){
+            if(result!=null){
             	System.out.println(result);
                 return result;
             }
@@ -72,61 +74,80 @@ public class SpelUtil {
         return null;
     }
 
-    public static void main(String[] args) {    	
-    	/*List<ValidateSpel> spelList= new ArrayList<ValidateSpel>();
-    	ValidateSpel validateSpel = new ValidateSpel();    	
-    	validateSpel.setExpression("'Hello World'.bytes.length");
-    	spelList.add(validateSpel);
-    	parserSpelExpressions(spelList,null);*/    	
+    public static void main(String[] args) throws Exception {
+    	/*long startTime=System.currentTimeMillis();
+    	Map<String,Object> data=new HashMap<String,Object>();
     	
-    	//baseTest();    	
+    	StandardEvaluationContext context = new StandardEvaluationContext(data);
+    	
+    	List<ValidateSpel> spelList= new ArrayList<ValidateSpel>();    
+    	
+    	//获取全量参数
+    	ValidateSpel validateSpel1 = new ValidateSpel();    	
+    	validateSpel1.setExpression("#root['lists']=T(com.example.demo.util.spel.ConfigCommonUtil).getStudent()");
+    	
+
+    	
+    	ValidateSpel validateSpel2 = new ValidateSpel();    	
+    	validateSpel2.setExpression("#root['params']=T(com.example.demo.util.spel.ConfigCommonUtil).getParams(#root['lists'])");
+    	
+    	spelList.add(validateSpel1);
+    	spelList.add(validateSpel2);
+    	
+    	validateSpel(spelList,null,context);
+    	System.out.println(data.size());
+    	long endTime=System.currentTimeMillis();
+    	System.out.println(endTime-startTime);*/
+    	
+    	baseTest();    	
     	//simlpeTest();
     	//parserTest();
     	//collectionTest();
-    	operatorTest();
+    	//operatorTest();
+    	//thisAndRootTest();
+    	
     	
 	}   
+    
+    public static List<String> validateSpel(List<ValidateSpel> expressions,Object obj,StandardEvaluationContext context ){
+        //List<ValidateSpel> expressions = JSONObject.parseArray(spel,ValidateSpel.class);
+        List<String> result = new ArrayList<>();
+        for(ValidateSpel exp : expressions){
+            //捕获spel表达式执行时发生的异常
+            try {
+            	if(context!=null) {
+            		PARSER.parseExpression(exp.getExpression()).getValue(context);
+            	}else {
+            		PARSER.parseExpression(exp.getExpression()).getValue(obj);            		
+            	}
+            } catch (Exception e) {
+                result.add(String.format("表达式：%s 配置错误：%s",exp.getExpression(),e.getMessage()));
+            }
+        }
+        return result;
+    }
 
-    //运算符操作
-    //文本是等值 比如: lt (<), gt (>), le (<=), ge (>=), eq (==), ne (!=), div (/), mod (%), not (!). 这些都是不区分大小写。
-	private static void operatorTest() {
-		boolean trueValue = PARSER.parseExpression("2 == 2").getValue(Boolean.class);		
-		boolean trueValue2 = PARSER.parseExpression("2 eq 2").getValue(Boolean.class);		
-		int i=PARSER.parseExpression("2 div 2").getValue(int.class);
-
-		// evaluates to false
-		boolean falseValue = PARSER.parseExpression("2 < -5.0").getValue(Boolean.class);
-		// evaluates to true
-		boolean trueValue3 = PARSER.parseExpression("'black' < 'block'").getValue(Boolean.class);		
-		boolean falseValue2 = PARSER.parseExpression("'xyz' instanceof T(int)").getValue(Boolean.class);
-
-		// evaluates to true
-		boolean trueValue4 = PARSER.parseExpression("'5.00' matches '^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
-		//evaluates to false
-		boolean falseValue3 = PARSER.parseExpression("'5.0067' matches '^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
+   
+    //this和root的使用
+    //传入函数
+	private static void thisAndRootTest() throws Exception {
+		List<Integer> primes = new ArrayList<Integer>();
+		primes.addAll(Arrays.asList(2,3,5,7,11,13,17));
 		
-		// Addition
-		int two = PARSER.parseExpression("1 + 1").getValue(Integer.class); // 2
-		String testString = PARSER.parseExpression("'test' + ' ' + 'string'").getValue(String.class); // test string
-
-		// Subtraction
-		int four = PARSER.parseExpression("1 - -3").getValue(Integer.class); // 4
-		//1e4就是10000,1后面4个0
-		double d = PARSER.parseExpression("1e4").getValue(Double.class); // -9000
-
-		// Multiplication
-		int six = PARSER.parseExpression("-2 * -3").getValue(Integer.class); // 6		
-		double twentyFour = PARSER.parseExpression("2.0 * 3e0 * 4").getValue(Double.class); // 24.0
-
-		// Division
-		int minusTwo = PARSER.parseExpression("6 / -3").getValue(Integer.class); // -2
-		double one = PARSER.parseExpression("8.0 / 4e1 / 2").getValue(Double.class); // 0.1
-
-		// Modulus
-		int three = PARSER.parseExpression("7 % 4").getValue(Integer.class); // 3
-		int one2 = PARSER.parseExpression("8 / 5 % 2").getValue(Integer.class); // 1
-		// Operator precedence
-		int minusTwentyOne = PARSER.parseExpression("1+2-3*8").getValue(Integer.class); // -21
+		StandardEvaluationContext context = new StandardEvaluationContext();
+		context.setVariable("primes",primes);
+		
+		Integer size  = (Integer)PARSER.parseExpression("#primes.size()").getValue(context);//7
+		//all prime numbers > 10 from the list (using selection ?{...}) [11, 13, 17]
+		List<Integer> primesGreaterThanTen  = (List<Integer>)PARSER.parseExpression("#primes.?[#this>10]").getValue(context);
+		
+		String reverse = StringUtils.reverse("abcdefg");
+		System.out.println(reverse);
+		
+		//就是为了将方法引入进来，没有进行重写
+		context.registerFunction("reverse", StringUtils.class.getDeclaredMethod("reverse", new Class[] {String.class}));
+		String helloWorldReversed = PARSER.parseExpression("#reverse('123456')").getValue(context, String.class);
+		System.out.println(helloWorldReversed);
 	}
 
 	//基础操作
@@ -143,7 +164,10 @@ public class SpelUtil {
     	Expression exp = PARSER.parseExpression("name");    	
     	EvaluationContext context = new StandardEvaluationContext(tesla);    	
     	System.out.println(exp.getValue(context,String.class));
-    	System.out.println(exp.getValue(tesla,String.class));
+    	System.out.println(exp.getValue(tesla,String.class));    
+    	//通过getValue方法也能完成对属性的赋值
+    	System.out.println(PARSER.parseExpression("name='kobe'").getValue(context,String.class));
+    	
     	
     	//不区分大小写允许的属性名称的第一个字母可大可小。
     	int year=(Integer) PARSER.parseExpression("birthdate.year +1900").getValue(context);
@@ -166,12 +190,22 @@ public class SpelUtil {
     	String invention =PARSER.parseExpression("inventions[3]").getValue(context,String.class);
     	System.out.println("invention:"+invention);
     	
+    	//构造
+    	Inventor einstein = PARSER.parseExpression("new com.example.demo.dto.spel.Inventor('Albert Einstein', 'German')").getValue(Inventor.class);
+    	
+    	
     	//复杂对象取值
     	Society ieee = new Society();
     	List<Inventor> list=new ArrayList<Inventor>();
     	list.add(tesla);
     	Map officers = new HashMap();
+    	Map map = new HashMap();
+    	map.put("name", "fan");
+    	
     	officers.put("president", tesla);
+    	officers.put("advisors", list);
+    	officers.put("mapData", map);
+    	
     	ieee.setMembers(list);
     	ieee.setOfficers(officers);
     	StandardEvaluationContext societyContext = new StandardEvaluationContext(ieee);    	
@@ -190,8 +224,17 @@ public class SpelUtil {
     	String city2 = PARSER.parseExpression("Officers['president'].PlaceOfBirth.City").getValue(societyContext, String.class);
     	System.out.println("获取Officers集合指定key的属性的取值："+city2);
     	
+    	String country2 =PARSER.parseExpression("Officers['advisors'][0].PlaceOfBirth.Country").getValue(societyContext, String.class);
+    	System.out.println("获取Officers集合指定key的属性的取值："+country2);
+    	
+    	String name =PARSER.parseExpression("Officers['mapData']['name']").getValue(societyContext, String.class);
+    	System.out.println("获取两层map里的指定值："+name);
+    	
     	boolean isMember =PARSER.parseExpression("isMember('Mihajlo Pupin')").getValue(societyContext,boolean.class);    	
     	System.out.println("调用isMember方法："+isMember);
+    	
+    	//复杂构造,list.add()返回值是boolean类型
+    	Boolean value2 = PARSER.parseExpression("members.add(new com.example.demo.dto.spel.Inventor('Albert Einstein', 'German'))").getValue(societyContext,Boolean.class);
 	}
 
 	//类型转换
@@ -253,10 +296,49 @@ public class SpelUtil {
     	//[1, 2, 3, 4]
     	int[] numbers2 = (int[]) PARSER.parseExpression("new int[]{1,2,3,4}").getValue();
     	//三行四列数组
-    	int[][] numbers3 = (int[][]) PARSER.parseExpression("new int[3][4]").getValue();
-		
-    	
+    	int[][] numbers3 = (int[][]) PARSER.parseExpression("new int[3][4]").getValue();    	
 	}
 	
+	 //运算符操作
+    //文本是等值 比如: lt (<), gt (>), le (<=), ge (>=), eq (==), ne (!=), div (/), mod (%), not (!). 这些都是不区分大小写。
+	private static void operatorTest() {
+		boolean trueValue = PARSER.parseExpression("2 == 2").getValue(Boolean.class);		
+		boolean trueValue2 = PARSER.parseExpression("2 eq 2").getValue(Boolean.class);		
+		int i=PARSER.parseExpression("2 div 2").getValue(int.class);
+
+		// evaluates to false
+		boolean falseValue = PARSER.parseExpression("2 < -5.0").getValue(Boolean.class);
+		// evaluates to true
+		boolean trueValue3 = PARSER.parseExpression("'black' < 'block'").getValue(Boolean.class);		
+		boolean falseValue2 = PARSER.parseExpression("'xyz' instanceof T(int)").getValue(Boolean.class);
+
+		// evaluates to true
+		boolean trueValue4 = PARSER.parseExpression("'5.00' matches '^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
+		//evaluates to false
+		boolean falseValue3 = PARSER.parseExpression("'5.0067' matches '^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
+		
+		// Addition
+		int two = PARSER.parseExpression("1 + 1").getValue(Integer.class); // 2
+		String testString = PARSER.parseExpression("'test' + ' ' + 'string'").getValue(String.class); // test string
+
+		// Subtraction
+		int four = PARSER.parseExpression("1 - -3").getValue(Integer.class); // 4
+		//1e4就是10000,1后面4个0
+		double d = PARSER.parseExpression("1e4").getValue(Double.class); // -9000
+
+		// Multiplication
+		int six = PARSER.parseExpression("-2 * -3").getValue(Integer.class); // 6		
+		double twentyFour = PARSER.parseExpression("2.0 * 3e0 * 4").getValue(Double.class); // 24.0
+
+		// Division
+		int minusTwo = PARSER.parseExpression("6 / -3").getValue(Integer.class); // -2
+		double one = PARSER.parseExpression("8.0 / 4e1 / 2").getValue(Double.class); // 0.1
+
+		// Modulus
+		int three = PARSER.parseExpression("7 % 4").getValue(Integer.class); // 3
+		int one2 = PARSER.parseExpression("8 / 5 % 2").getValue(Integer.class); // 1
+		// Operator precedence
+		int minusTwentyOne = PARSER.parseExpression("1+2-3*8").getValue(Integer.class); // -21
+	}
 	
 }

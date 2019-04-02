@@ -13,6 +13,8 @@ public class Biology implements Serializable{
 	private static final long serialVersionUID = 6705418339557986802L;
 	
 	private Boolean alive;
+	
+	private int id;	
 
 	@Override
 	public String toString() {
