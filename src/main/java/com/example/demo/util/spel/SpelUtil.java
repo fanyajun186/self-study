@@ -148,6 +148,45 @@ public class SpelUtil {
         return null;
     }
     
+
+    
+    /**
+     * 获取spel表达式结果
+     * @param expression
+     * @param c
+     * @return
+     */
+    public static <T> T parserElToAssignType(String expression,Class<T> c){
+    	return	PARSER.parseExpression(expression).getValue(c);
+    }
+    
+    /**
+     * 获取spel表达式结果
+     * @param expression
+     * @param c
+     * @return
+     */
+    public static <T> T parserElToAssignType(String expression,ExpressionParser parser,Class<T> c){
+    	if(parser!=null) {
+    		return	parser.parseExpression(expression).getValue(c);
+    	}
+    	return	PARSER.parseExpression(expression).getValue(c);
+    }
+    
+    /**
+     * 将spel表达式和data的操作结果赋值指定的类型
+     * @param expression
+     * @param data
+     * @param class1
+     * @return
+     */
+    public static <T> T parserElToAssignType(String expression,Object data,ExpressionParser parser,Class<T> c){
+    	if(parser!=null) {
+    		return	parser.parseExpression(expression).getValue(data,c);
+    	}
+    	return	PARSER.parseExpression(expression).getValue(data,c);
+    }
+    
     /**
      * 将spel表达式和data的操作结果赋值指定的类型
      * @param expression
@@ -168,23 +207,104 @@ public class SpelUtil {
      */
     public static <T> T parserElToAssignType(String expression,EvaluationContext context,Class<T> c){
     	return	PARSER.parseExpression(expression).getValue(context,c);
-    } 
-    
-    
+    }    
 
-    public static void main(String[] args) throws Exception {
-    	/*long startTime=System.currentTimeMillis();
-    	Map<String,Object> data=new HashMap<String,Object>();
+    public static void main(String[] args) throws Exception {    	
+    	//utilTest();
+    	//fanxingTest();
+    	//baseTest();    	
+    	//simlpeTest();
+    	//parserTest();
+    	//collectionTest();
+    	//operatorTest();
+    	//thisAndRootTest();
+    	//complexOperatorTest();
     	
-    	StandardEvaluationContext context = new StandardEvaluationContext(data);
+    	StringBuffer sb=new StringBuffer();
+    	String str=sb.toString();
+    	System.out.println(str);
+    	//java.lang.StringBuffer.
+    	System.out.println("===========");
+    	String expression="new StringBuffer().append('a').append(',b').toString()";
+    	str=parserElToAssignType(expression,String.class);
+    	System.out.println(str);
+	}
+
+    //复杂运算符
+    private static void complexOperatorTest() {    	
+    	String str1=parserElToAssignType("true?'trueExp':'falseExp'",String.class);
+    	System.out.println(str1);    	
     	
+    	//复杂对象取值
+    	Society ieee = new Society();
+    	Inventor tesla = new Inventor("Nikola Tesla", "Serbian");   
+    	tesla.setPlaceOfBirth(new PlaceOfBirth("Smiljan"));
+    	Inventor tesla2 = new Inventor("Nikola", "Serbian");   	
+    	Inventor tesla3 = new Inventor("Tesla", "Serbian");   	
+    	List<Inventor> list=new ArrayList<Inventor>();
+    	list.add(tesla);
+    	list.add(tesla2);
+    	list.add(tesla3);
+    	ieee.setMembers(list);
+    	
+    	StandardEvaluationContext context = new StandardEvaluationContext(tesla);
+    	StandardEvaluationContext societyContext = new StandardEvaluationContext(ieee);
+    	
+    	PARSER.parseExpression("name").setValue(societyContext, "IEEE");
+    	societyContext.setVariable("queryName", "Nikola Tesla");
+    	
+    	String expression = "isMember(#queryName)? #queryName +' is a member of the' + name + 'Society' : #queryName +' is not a member of the ' +name+ 'Society' ";
+    	String str2=parserElToAssignType(expression,societyContext,String.class);
+    	System.out.println(str2);
+    	
+    	//Elvis操作符
+    	String name=parserElToAssignType("name?:'kobe'",context,String.class);
+    	System.out.println("第一个"+name);
+    	tesla.setName(null);
+    	name=parserElToAssignType("name?:'kobe'",context,String.class);
+    	System.out.println("第二个"+name);
+    	
+    	//null!=null->false,所以返回Unknown
+    	String name2 = PARSER.parseExpression("null?:'Unknown'").getValue(String.class);
+    	System.out.println(name2); // Unknown
+    	
+    	//选择表达式，?取全部，^取第一个，$取最后一个
+    	List<Inventor> list2 = parserElToAssignType("Members.?[Nationality == 'Serbian']",societyContext,List.class);
+    	System.out.println(list2);    	
+    	Inventor inventor2=parserElToAssignType("members.^[nationality == 'Serbian']",societyContext,Inventor.class);
+    	System.out.println(inventor2);
+    	Inventor inventor3=parserElToAssignType("members.$[nationality == 'Serbian']",societyContext,Inventor.class);    	
+    	System.out.println(inventor3);
+    	
+    	
+    	//安全运算符，为空不抛异常
+    	String city = PARSER.parseExpression("PlaceOfBirth?.City").getValue(context, String.class);
+    	System.out.println(city); // Smiljan
+    	tesla.setPlaceOfBirth(null);
+    	
+    	//要么手动判空，要么用最素的parser,不然就报错
+    	ExpressionParser parser = new SpelExpressionParser();
+    	city = PARSER.parseExpression("PlaceOfBirth!=null?PlaceOfBirth?.City:null").getValue(context, String.class);
+    	city = PARSER.parseExpression("PlaceOfBirth?.City").getValue(context, String.class);
+    	System.out.println(city); // null - does not throw NullPointerException!!!
+    	
+    	//集合投影    	
+    	List nationality=parserElToAssignType("Members.![nationality]",societyContext,List.class);
+    	System.out.println(nationality);
+    	List placesOfBirth =parserElToAssignType("Members.![PlaceOfBirth!=null?PlaceOfBirth?.City:null]",societyContext,List.class);
+    	System.out.println(placesOfBirth);
+	}
+
+	//工具类测试
+    private static void utilTest() {
+    	long startTime=System.currentTimeMillis();
+    	Map<String,Object> data=new HashMap<String,Object>();    	
+    	StandardEvaluationContext context = new StandardEvaluationContext(data);    	
     	List<ValidateSpel> spelList= new ArrayList<ValidateSpel>();    
     	
     	//获取全量参数
     	ValidateSpel validateSpel1 = new ValidateSpel();    	
     	validateSpel1.setExpression("#root['lists']=T(com.example.demo.util.spel.ConfigCommonUtil).getStudent()");
-    	
-
     	
     	ValidateSpel validateSpel2 = new ValidateSpel();    	
     	validateSpel2.setExpression("#root['params']=T(com.example.demo.util.spel.ConfigCommonUtil).getParams(#root['lists'])");
@@ -192,19 +312,15 @@ public class SpelUtil {
     	spelList.add(validateSpel1);
     	spelList.add(validateSpel2);
     	
-    	validateSpel(spelList,null,context);
+    	executeSpelList(spelList,null,context);
     	System.out.println(data.size());
     	long endTime=System.currentTimeMillis();
-    	System.out.println(endTime-startTime);*/
-    	
-    	//baseTest();    	
-    	//simlpeTest();
-    	//parserTest();
-    	//collectionTest();
-    	//operatorTest();
-    	//thisAndRootTest();
-    	
-    	GregorianCalendar c = new GregorianCalendar();
+    	System.out.println(endTime-startTime);		
+	}
+
+	//泛型方法
+	private static void fanxingTest() {
+		GregorianCalendar c = new GregorianCalendar();
     	c.set(1856, 7, 9);
     	PlaceOfBirth placeOfBirth=new PlaceOfBirth("沧州","河北");
     	
@@ -216,53 +332,11 @@ public class SpelUtil {
     	String ex="name";
     	
     	String str=parserElToAssignType(ex,tesla, String.class);
-    	System.out.println("泛型："+str);
-	}   
-
-
-	public static List<String> validateSpel(List<ValidateSpel> expressions,Object obj,StandardEvaluationContext context ){
-        //List<ValidateSpel> expressions = JSONObject.parseArray(spel,ValidateSpel.class);
-        List<String> result = new ArrayList<>();
-        for(ValidateSpel exp : expressions){
-            //捕获spel表达式执行时发生的异常
-            try {
-            	if(context!=null) {
-            		PARSER.parseExpression(exp.getExpression()).getValue(context);
-            	}else {
-            		PARSER.parseExpression(exp.getExpression()).getValue(obj);            		
-            	}
-            } catch (Exception e) {
-                result.add(String.format("表达式：%s 配置错误：%s",exp.getExpression(),e.getMessage()));
-            }
-        }
-        return result;
-    }
-
-   
-    //this和root的使用
-    //传入函数
-	private static void thisAndRootTest() throws Exception {
-		List<Integer> primes = new ArrayList<Integer>();
-		primes.addAll(Arrays.asList(2,3,5,7,11,13,17));
-		
-		StandardEvaluationContext context = new StandardEvaluationContext();
-		context.setVariable("primes",primes);
-		
-		Integer size  = (Integer)PARSER.parseExpression("#primes.size()").getValue(context);//7
-		//all prime numbers > 10 from the list (using selection ?{...}) [11, 13, 17]
-		List<Integer> primesGreaterThanTen  = (List<Integer>)PARSER.parseExpression("#primes.?[#this>10]").getValue(context);
-		
-		String reverse = StringUtils.reverse("abcdefg");
-		System.out.println(reverse);
-		
-		//就是为了将方法引入进来，没有进行重写
-		context.registerFunction("reverse", StringUtils.class.getDeclaredMethod("reverse", new Class[] {String.class}));
-		String helloWorldReversed = PARSER.parseExpression("#reverse('123456')").getValue(context, String.class);
-		System.out.println(helloWorldReversed);
-	}
+    	System.out.println("泛型："+str);		
+	}	
 
 	//基础操作
-    private static void baseTest() {    	
+    private static void baseTest() {
     	GregorianCalendar c = new GregorianCalendar();
     	c.set(1856, 7, 9);
     	PlaceOfBirth placeOfBirth=new PlaceOfBirth("沧州","河北");
@@ -298,7 +372,7 @@ public class SpelUtil {
     	System.out.println("aaaa:"+value);
     	
     	// 数组和列表使用方括号获得内容。inventions属性为空会异常，长度不够也会报数组越界
-    	String invention =PARSER.parseExpression("inventions[3]").getValue(context,String.class);
+    	String invention =PARSER.parseExpression("inventions[6]").getValue(context,String.class);
     	System.out.println("invention:"+invention);
     	
     	//构造
@@ -370,6 +444,7 @@ public class SpelUtil {
 	private static void parserTest() {
 		class Demo {
 		    public List<String> list;
+		    public String[] arr;
 		}
 		// Turn on:
 		// - auto null reference initialization
@@ -377,11 +452,14 @@ public class SpelUtil {
 		//此配置保证取值为空的时不报异常
 		SpelParserConfiguration config = new SpelParserConfiguration(true,true);
 		ExpressionParser parser = new SpelExpressionParser(config);
-		Expression expression = parser.parseExpression("list[3]");
+		Expression expression = parser.parseExpression("list[3]");		
+		Expression expression2 = parser.parseExpression("arr[3]");
 		
 		Demo demo = new Demo();
 		Object o = expression.getValue(demo);
+		Object o2 = expression2.getValue(demo);
 		System.out.println(o);			
+		System.out.println(o2);			
 	}
 
 	//集合类方法
@@ -450,6 +528,28 @@ public class SpelUtil {
 		int one2 = PARSER.parseExpression("8 / 5 % 2").getValue(Integer.class); // 1
 		// Operator precedence
 		int minusTwentyOne = PARSER.parseExpression("1+2-3*8").getValue(Integer.class); // -21
+	
 	}
 	
+    //this和root的使用
+    //传入函数
+	private static void thisAndRootTest() throws Exception {
+		List<Integer> primes = new ArrayList<Integer>();
+		primes.addAll(Arrays.asList(2,3,5,7,11,13,17));
+		
+		StandardEvaluationContext context = new StandardEvaluationContext();
+		context.setVariable("primes",primes);
+		
+		Integer size  = (Integer)PARSER.parseExpression("#primes.size()").getValue(context);//7
+		//all prime numbers > 10 from the list (using selection ?{...}) [11, 13, 17]
+		List<Integer> primesGreaterThanTen  = (List<Integer>)PARSER.parseExpression("#primes.?[#this>10]").getValue(context);
+		
+		String reverse = StringUtils.reverse("abcdefg");
+		System.out.println(reverse);
+		
+		//就是为了将方法引入进来，没有进行重写
+		context.registerFunction("reverse", StringUtils.class.getDeclaredMethod("reverse", new Class[] {String.class}));
+		String helloWorldReversed = PARSER.parseExpression("#reverse('123456')").getValue(context, String.class);
+		System.out.println(helloWorldReversed);
+	}
 }
