@@ -1,6 +1,8 @@
 package com.example.demo.util.designMode.reflect;
 
+import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,6 +14,7 @@ import org.springframework.util.ReflectionUtils;
 
 import com.example.demo.dto.common.Student;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public class ReflectUtil {
 
@@ -27,10 +30,10 @@ public class ReflectUtil {
 		dto.setaLoanAmount("10000");
 		dto.setrCarLoanAmount("20000");
 		
-		System.out.println("================>>>>>>>>>");
-		/*Map<String,Object> map1=getAllFieldValueByObject(dto);
+		/*System.out.println("================>>>>>>>>>");
+		Map<String,Object> map1=getAllFieldValueByObject(dto);
 		System.out.println(map1);
-		System.out.println(map1.size());*/
+		System.out.println(map1.size());
 		
 		//getFieldValueByTargetName(dto,"belongSale");	
 		System.out.println("================");
@@ -41,9 +44,43 @@ public class ReflectUtil {
 		System.out.println(getFieldValueByObject(dto,"appTime"));
 		System.out.println(getFieldValueByObject(dto,"aLoanAmount"));
 		System.out.println(getFieldValueByObject(dto,"rLoanAmount"));
-		System.out.println(getFieldValueByObject(dto,"rCarLoanAmount"));
+		System.out.println(getFieldValueByObject(dto,"rCarLoanAmount"));*/
 		
+		
+		BeanInfo beanInfo = Introspector.getBeanInfo(Student.class);
+		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+		Map<String, String> map = null;
+		map = objectToMap(dto, propertyDescriptors);
+		System.out.println(map.size());
     }   
+	
+	public static Map<String, String> objectToMap(Object obj, PropertyDescriptor[] propertyDescriptors) throws Exception {
+		if(obj == null)
+			return null;
+
+		Map<String, String> map = new HashMap<String, String>();
+
+		for (PropertyDescriptor property : propertyDescriptors) {
+			String key = property.getName();
+
+			if (key.compareToIgnoreCase("class") == 0) {
+				continue;
+			}
+			Method getter = property.getReadMethod();
+			Object value = getter!=null ? getter.invoke(obj) : null;
+
+			String strValue = "";
+//			if(value instanceof Date){
+//				strValue = DateUtil.formatDateTime((Date)value);
+//
+//			}else {
+//				strValue = StringUtil.fixNull(value);
+//			}
+			map.put(key, strValue);
+		}
+		obj = null; // 置空，尽快回收
+		return map;
+	}
 	
     /**
      * 将指定对象转化为map

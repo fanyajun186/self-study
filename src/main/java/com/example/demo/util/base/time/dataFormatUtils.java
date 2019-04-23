@@ -9,9 +9,15 @@ import java.util.List;
 public class dataFormatUtils {
 
     public static void main(String[] args) throws Exception {
+    	
+    	Date date = new Date();
+    	Calendar c = Calendar.getInstance();//定义日期实例
+    	c.setTime(date);
+    	c.add(Calendar.MONTH, 15);
+    	 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	System.out.println(sdf.format(c.getTime()));
        
-       
-       List<String> list=new ArrayList<String>();
+       /*List<String> list=new ArrayList<String>();
       
        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");   
        
@@ -31,7 +37,7 @@ public class dataFormatUtils {
        }
        for (String timeStr : list) {
            System.out.println(timeStr);//输出日期结果    
-       }
+       }*/
        
     } 
     

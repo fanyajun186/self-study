@@ -156,6 +156,12 @@
              <artifactId>lombok</artifactId>
              <version>1.16.20</version>
          </dependency>
+         
+         <dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    <version>1.9.3</version>
+		</dependency>
 
 	</dependencies>
 
