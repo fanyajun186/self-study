@@ -10,6 +10,13 @@ public class dataFormatUtils {
 
     public static void main(String[] args) throws Exception {
     	
+        long a = System.currentTimeMillis();
+        // Negative example:
+        long b = new Date().getTime();
+
+        System.out.println(a);
+        System.out.println(b);
+    	
     	Date date = new Date();
     	Calendar c = Calendar.getInstance();//定义日期实例
     	c.setTime(date);

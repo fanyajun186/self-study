@@ -20,10 +20,10 @@ public class CountExample {
 	private final static Logger logger = LoggerFactory.getLogger(CountExample.class);
 
 	 // 请求总数
-    public static int clientTotal = 1;
+    public static int clientTotal = 100;
 
     // 同时并发执行的线程数
-    public static int threadTotal = 1;
+    public static int threadTotal = 10;
 
     public static int count = 0;
     
@@ -43,7 +43,8 @@ public class CountExample {
                 	//执行此方法用于获取执行许可，当总计未释放的许可数不超过200时，
                 	//允许通行，否则线程阻塞等待，直到获取到许可。
                     semaphore.acquire();
-                    send();                    
+                    //send();       
+                    add();
                     //释放许可
                     semaphore.release();
                 } catch (Exception e) {
