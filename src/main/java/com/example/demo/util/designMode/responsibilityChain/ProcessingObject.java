@@ -19,7 +19,7 @@ public abstract class ProcessingObject<T> {
 	
 
 	public void sayHello() {
-		System.out.println("hello");
+		System.out.println("hello,"+Thread.currentThread().getName());
 	}
 
 	protected abstract T handleWork(T input);

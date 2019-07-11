@@ -210,6 +210,13 @@
 		    <artifactId>commons-beanutils</artifactId>
 		    <version>1.9.3</version>
 		</dependency>
+		
+		<!-- http 工具类所需fluent-hc -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>fluent-hc</artifactId>
+		    <version>4.5.9</version>
+		</dependency>
 
 	</dependencies>
 
