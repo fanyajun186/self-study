@@ -1,4 +1,4 @@
-package com.example.demo.util.arithmetic.BinTree;
+package com.example.demo.util.arithmetic.tree.BinTree;
 
 import java.util.LinkedList;
 import java.util.List;

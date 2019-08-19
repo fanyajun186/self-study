@@ -1,4 +1,4 @@
-package com.example.demo.util.arithmetic.Prim;
+package com.example.demo.util.arithmetic.image;
 
 import java.util.ArrayList;
 import java.util.Arrays;

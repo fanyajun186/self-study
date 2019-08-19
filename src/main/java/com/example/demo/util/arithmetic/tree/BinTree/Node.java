@@ -1,4 +1,4 @@
-package com.example.demo.util.arithmetic.BinTree;
+package com.example.demo.util.arithmetic.tree.BinTree;
 
 public class Node {
 	 
