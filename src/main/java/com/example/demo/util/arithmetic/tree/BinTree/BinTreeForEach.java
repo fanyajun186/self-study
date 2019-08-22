@@ -2,6 +2,7 @@ package com.example.demo.util.arithmetic.tree.BinTree;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 public class BinTreeForEach {
@@ -21,16 +22,22 @@ public class BinTreeForEach {
 		// TODO Auto-generated method stub
 		LinkedList<Integer> inputList =new LinkedList<Integer>(Arrays.asList(new Integer[] {3,2,9,null,null,10,null,null,8,null,4}));
 		TreeNode treeNode=createBinaryTree(inputList);
+		System.out.println("深度遍历======");
 		System.out.println("前序遍历：");
 		preOrderTraveral(treeNode);
 		System.out.println("中序遍历：");
 		inOrderTraveral(treeNode);
 		System.out.println("后序遍历：");
-		postOrderTraveral(treeNode);
-		
+		postOrderTraveral(treeNode);		
+	
 		System.out.println("非递归前序遍历：");
 		preOrderTraveralWithStack(treeNode);
+		
+		System.out.println("广度遍历======");
+		levelOrderTraversal(treeNode);
 	}
+
+
 
 	/**
 	 * 创建二叉树-递归遍历
@@ -51,6 +58,25 @@ public class BinTreeForEach {
 	}
 	
 	/**
+	 * 广度遍历
+	 * @param treeNode
+	 */
+	private static void levelOrderTraversal(TreeNode root) {
+		Queue<TreeNode> queue = new LinkedList<TreeNode>();
+		queue.offer(root);
+		while(!queue.isEmpty()) {
+			TreeNode treeNode = queue.poll();
+			System.out.println(treeNode.data);
+			if(treeNode.leftChild!=null) {
+				queue.offer(treeNode.leftChild);
+			}
+			if(treeNode.rightChild!=null) {
+				queue.offer(treeNode.rightChild);
+			}
+		}
+	}
+	
+	/**
 	 * 前序遍历-非递归
 	 * @param treeNode
 	 */
@@ -59,9 +85,9 @@ public class BinTreeForEach {
 		TreeNode treeNode = node;
 		while(treeNode!=null || !stack.isEmpty()) {
 			//迭代访问节点的左孩子，并入栈
-			if(treeNode!=null) {
+			while(treeNode!=null) {
 				System.out.println(treeNode.data);
-				stack.push(treeNode.leftChild);
+				stack.push(treeNode);				
 				treeNode = treeNode.leftChild;
 			}
 			//没有左孩子，父节点出栈顶，访问节点右孩子
