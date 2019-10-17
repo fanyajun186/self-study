@@ -29,9 +29,9 @@ public class BatchHandleData {
 	private static void initDoumentData() {
 		try {
 			//请求地址
-			String url="http://172.28.12.194:8095/boss/document/syn";
+			String url="http://fengyun.mljr.com/boss/document/syn";
 			//文件路径
-			String path="C:\\Users\\fanya\\Desktop\\沈阳，中山数据 - 副本.xlsx";
+			String path="C:\\Users\\fanya\\Desktop\\需要处理的.xlsx";
 			
 			//读取配置文件的数据
 			List<String> appCodes=PoiUtil.getImportData(path);
@@ -39,9 +39,11 @@ public class BatchHandleData {
 			for (String appCode : appCodes) {
 				Map<String,String> param=new HashMap<String,String>();
 				param.put("appCode", appCode);
-				param.put("status", "32");			
+				param.put("status", "6600");			
 				try {
-					String jsonData = HttpUtil.post(url, param, null);
+					Map<String, String> header = new HashMap<String, String>();
+					header.put("orderenv", "newStatus");
+					String jsonData = HttpUtil.post(url, param, header);
 					logger.info("spReleasQuota is success ,appCode={}, url={},resp={}", appCode, url,jsonData);
 					RespDTO<String> respDTO = JSON.parseObject(jsonData, new TypeReference<RespDTO<String>>(){});
 					if(respDTO.getStatus()==RespStatusEnum.SUCCESS.getStatus()) {
