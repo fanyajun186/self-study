@@ -39,10 +39,10 @@ public class BatchHandleData {
 			for (String appCode : appCodes) {
 				Map<String,String> param=new HashMap<String,String>();
 				param.put("appCode", appCode);
-				param.put("status", "6600");			
+				param.put("status", "32");			
 				try {
 					Map<String, String> header = new HashMap<String, String>();
-					header.put("orderenv", "newStatus");
+					header.put("orderenv", "oldStatus");
 					String jsonData = HttpUtil.post(url, param, header);
 					logger.info("spReleasQuota is success ,appCode={}, url={},resp={}", appCode, url,jsonData);
 					RespDTO<String> respDTO = JSON.parseObject(jsonData, new TypeReference<RespDTO<String>>(){});
