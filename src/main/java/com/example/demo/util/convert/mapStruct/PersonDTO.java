@@ -10,11 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class PersonDTO {
-	 private Long id; private String name; 
+	 private Long id; 
+	 
+	 private String name; 
 	 /**
      * 对应 Person.user.age
      */ 
-	 private Integer age; private String email; 
+	 private Integer age; 
+	 
+	 private String email; 
 	 /**
      * 与 DO 里面的字段名称(birthDay)不一致
      */ 
