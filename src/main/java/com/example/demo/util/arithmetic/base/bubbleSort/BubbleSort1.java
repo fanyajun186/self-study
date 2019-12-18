@@ -1,4 +1,4 @@
-package com.example.demo.util.arithmetic.base;
+package com.example.demo.util.arithmetic.base.bubbleSort;
 
 import java.util.Arrays;
 

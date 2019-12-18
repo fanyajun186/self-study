@@ -12,11 +12,13 @@ public class CountDownLatchTest implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(number.getAndIncrement());
+    	
+    	System.out.println(Thread.currentThread().getName()+":"+number.getAndIncrement());
+        System.out.println(Thread.currentThread().getName()+":"+number.intValue());
         synchronized (this) {
             try {
                 if (!bol) {
-                    System.out.println(bol);
+                    System.out.println(Thread.currentThread().getName()+":"+bol);
                     bol = true;
                     Thread.sleep(10000);
                 }

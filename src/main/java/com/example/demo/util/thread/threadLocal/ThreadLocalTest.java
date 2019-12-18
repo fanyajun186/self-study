@@ -24,6 +24,7 @@ public class ThreadLocalTest {
 			
 			//运行线程时，分别设置&获取ThreadLocal的值
 			String name=Thread.currentThread().getName();
+			System.out.println("set前threadLocal的值"+threadLocal.get());
 			threadLocal.set(name+"的threadLocal");
 			try {
 				Thread.sleep(1000);

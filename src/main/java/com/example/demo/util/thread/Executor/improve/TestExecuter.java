@@ -6,7 +6,7 @@ public class TestExecuter {
 
     private static final int CORE_SIZE = 4;
     private static final int MAX_SIZE = 10;
-    private static final long KEEP_ALIVE_TIME = 1;
+    private static final long KEEP_ALIVE_TIME = 10;
     private static final int QUEUE_SIZE = 5;
     
     static EnhancedThreadPoolExecutor executor = new EnhancedThreadPoolExecutor(CORE_SIZE,MAX_SIZE,KEEP_ALIVE_TIME, TimeUnit.SECONDS , new TaskQueue(QUEUE_SIZE));
