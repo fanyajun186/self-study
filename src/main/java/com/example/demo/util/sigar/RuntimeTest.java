@@ -24,6 +24,7 @@ public class RuntimeTest {
         try {
             // System信息，从jvm获取
             //System.setProperty("java.library.path", "so");
+            System.getProperty("java.library.path");
             property();
             System.out.println("----------------------------------");
             // cpu信息
