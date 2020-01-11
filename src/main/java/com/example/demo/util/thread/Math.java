@@ -2,12 +2,10 @@ package com.example.demo.util.thread;
 
 import java.util.Vector;
 
-import com.example.demo.util.convert.mapStruct.User;
 
 public class Math {
 	
 	public static final int initData =666;	
-	public static User user = new User();
 	
 	public int compute() {
 		int a=1;
