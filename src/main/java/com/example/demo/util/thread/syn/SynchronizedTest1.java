@@ -7,7 +7,7 @@ package com.example.demo.util.thread.syn;
  */
 public class SynchronizedTest1 {
 
-	public void method1(){
+	public  void method1(){
         System.out.println("Method 1 start");
         try {
             System.out.println("Method 1 execute");
@@ -18,7 +18,7 @@ public class SynchronizedTest1 {
         System.out.println("Method 1 end");
     }
 	
-	 public void method2(){
+	 public  void method2(){
 	        System.out.println("Method 2 start");
 	        try {
 	            System.out.println("Method 2 execute");
@@ -29,8 +29,12 @@ public class SynchronizedTest1 {
 	        System.out.println("Method 2 end");
 	  }
 	 
+	 /**
+	  * 普通同步方法，锁是当前实例对象,调用的同一个对象里的方法，必须等待。两个对象，分别执行
+	  * @param args
+	  */
 	   public static void main(String[] args) {
-	        final SynchronizedTest1 test = new SynchronizedTest1();
+	       SynchronizedTest1 test = new SynchronizedTest1();	       
 
 	        new Thread(new Runnable() {
 	            @Override
