@@ -87,7 +87,7 @@ public class PasswordUtils {
 
     public static void main(String[] args) {
         System.out.println(encrypt("168846"));
-        System.out.println(decrypt("uz8D1om01+I="));
+        System.out.println(decrypt("qUxbf8vNFCQ="));
     }
 }
 
